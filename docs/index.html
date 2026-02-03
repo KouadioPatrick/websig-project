@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSIG - Gestion Foncière</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- CSS personnalisé -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="container">
+        <!-- Barre latérale -->
+        <div id="sidebar">
+            <h1>🗺️ WebSIG Foncier</h1>
+            
+            <div class="panel">
+                <h3>🔍 Recherche par Numéro de Lot</h3>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Ex: L001, 25, LOT-123..."
+                    onkeypress="if(event.key==='Enter') performSearch()"
+                >
+                <button onclick="performSearch()">🔍 Rechercher</button>
+                <button onclick="clearSearch()" style="background: #e74c3c;">✖ Effacer</button>
+                <div id="searchSuggestions" style="display:none; background:#34495e; margin-top:5px; padding:5px; border-radius:4px;"></div>
+            </div>
+            
+            <div class="panel">
+                <h3>🎨 Filtres</h3>
+                <select id="filterLayer">
+                    <option value="lots">Lots</option>
+                    <option value="ilots">Îlots</option>
+                </select>
+                <select id="filterAttribute">
+                    <option value="">-- Attribut --</option>
+                    <option value="proprietaire">Propriétaire</option>
+                    <option value="type">Type</option>
+                </select>
+                <input type="text" id="filterValue" placeholder="Valeur">
+                <button onclick="applyFilter()">Appliquer</button>
+                <button onclick="clearFilter()">Réinitialiser</button>
+            </div>
+            
+            <div class="panel">
+                <h3>📥 Export</h3>
+                <button onclick="exportData('lots')">Exporter Lots</button>
+                <button onclick="exportData('ilots')">Exporter Îlots</button>
+            </div>
+            
+            <div class="panel info">
+                <p><small>Dernière mise à jour: <span id="lastUpdate">-</span></small></p>
+            </div>
+        </div>
+        
+        <!-- Carte -->
+        <div id="map"></div>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- sql.js pour lire les MBTiles (Cloudflare CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    
+    <!-- Scripts personnalisés -->
+    <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+    
+    <!-- Fonctions d'interface -->
+    <script>
+    function performSearch() {
+        const term = document.getElementById('searchInput').value;
+        searchByLotNumber(term);
+    }
+    
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        resetAllStyles();
+        map.setView(CONFIG.map.center, CONFIG.map.zoom);
+    }
+    
+    // Autocomplétion (optionnel)
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const term = e.target.value.trim();
+        if (term.length >= 2) {
+            const suggestions = searchWithAutocomplete(term);
+            displaySuggestions(suggestions);
+        } else {
+            document.getElementById('searchSuggestions').style.display = 'none';
+        }
+    });
+    
+    function displaySuggestions(suggestions) {
+        const container = document.getElementById('searchSuggestions');
+        if (suggestions.length > 0) {
+            container.innerHTML = suggestions.slice(0, 5).map(s => 
+                `<div style="padding:5px; cursor:pointer; border-bottom:1px solid #2c3e50;" 
+                     onclick="document.getElementById('searchInput').value='${s}'; performSearch();">
+                    ${s}
+                </div>`
+            ).join('');
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+        
+        function exportData(layerId) {
+            exportVisibleData(layerId);
+        }
+        
+        // Afficher la date de dernière mise à jour
+        fetch('./data/processed/lots.geojson?v=' + Date.now())
+            .then(response => response.headers.get('last-modified'))
+            .then(date => {
+                if (date) {
+                    document.getElementById('lastUpdate').textContent = 
+                        new Date(date).toLocaleDateString('fr-FR');
+                }
+            });
+    </script>
+</body>
+</html>

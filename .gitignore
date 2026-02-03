@@ -1,0 +1,32 @@
+# === DONNÉES BRUTES ===
+data/raw/*
+!data/raw/.gitkeep
+
+# === SAUVEGARDES ===
+backup/*
+!backup/.gitkeep
+
+# === LOGS ===
+logs/*
+!logs/.gitkeep
+*.log
+
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.env
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# === SYSTÈME ===
+Thumbs.db
+desktop.ini
