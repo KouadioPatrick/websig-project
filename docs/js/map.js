@@ -281,6 +281,13 @@ function searchByLotNumber(searchTerm) {
 
   // Parcourir toutes les couches chargées
   for (const [layerId, layer] of Object.entries(loadedLayers)) {
+    if (found) break; // Arrêter dès qu'on trouve
+
+    // Ignorer les couches qui ne gèrent pas eachLayer (ex: TileLayer/MBTiles)
+    if (!layer || typeof layer.eachLayer !== 'function') {
+      continue;
+    }
+
     layer.eachLayer(function(sublayer) {
       // Vérifier si la propriété NUM_LOTS existe
       if (sublayer.feature.properties.NUM_LOTS !== undefined) {
