@@ -324,9 +324,14 @@ function searchByLotNumber(searchTerm) {
 // === FONCTION POUR RÉINITIALISER TOUS LES STYLES ===
 function resetAllStyles() {
   for (const [layerId, layer] of Object.entries(loadedLayers)) {
-    layer.eachLayer(function(sublayer) {
-      sublayer.setStyle(CONFIG.dataLayers[layerId].style);
-    });
+    // Vérifier que la couche expose eachLayer (GeoJSON/FeatureGroup).
+    // Les TileLayer (ex: MBTiles, OSM) n'ont pas eachLayer et doivent être ignorés.
+    if (layer && typeof layer.eachLayer === 'function') {
+      layer.eachLayer(function(sublayer) {
+        sublayer.setStyle(CONFIG.dataLayers[layerId].style);
+      });
+    }
+    // Sinon : on ignore la couche (tile layers, etc.)
   }
 }
 
