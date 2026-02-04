@@ -5,7 +5,7 @@
 const CONFIG = {
   // === CARTE ===
   map: {
-    center: [5.3600, -4.0083], // Abidjan
+    center: [6.914056, -5.229250], // Yamoussoukro
     zoom: 12,
     minZoom: 10,
     maxZoom: 18
