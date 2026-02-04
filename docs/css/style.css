@@ -126,4 +126,7 @@ button:hover {
     #map {
         height: 50vh;
     }
+    .leaflet-container {
+  background: transparent !important;
+}
 }
