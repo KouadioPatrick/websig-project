@@ -29,7 +29,7 @@ const CONFIG = {
   overlayLayers: {
     orthophoto: {
       name: 'Ortho-Photo',
-      url: 'https://efdxgfjxblbdqqrieymn.supabase.co/storage/v1/object/public/Ortho/14-19.mbtiles',
+      url: 'https://efdxgfjxblbdqqrieymn.supabase.co/storage/v1/object/public/Ortho/V.mbtiles',
       type: 'mbtiles',
       attribution: 'Ortho-Photo',
       visible: true
